@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "codeblocks-plus-plus",
+	"name": "CodeBlocks++",
 	"version": "1.0.0",
 	"minAppVersion": "1.0.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
+	"description": "Enhances Obsidians Codeblocks by letting them execute the code",
+	"author": "Johannes Hans",
+	"authorUrl": "https://github.com/CommandJoo",
 	"fundingUrl": "https://obsidian.md/pricing",
 	"isDesktopOnly": false
 }

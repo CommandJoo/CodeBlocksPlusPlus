@@ -1,8 +1,74 @@
-/*
+.markdown-source-view.mod-cm6 .cm-embed-block:has(.code-runner) .edit-block-button {
+	display: none !important;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.markdown-source-view.mod-cm6 .cm-embed-block:has(.code-runner):hover {
+	box-shadow: none !important;
+	border-radius: 0 !important;
+}
 
-If your plugin does not need CSS, delete this file.
+html {
+	--background-secondary: #000;
+	--code-background: #000;
 
-*/
+	--border-width: 1px;
+	--window-border-color: #000;
+
+	--radius-m: 0;
+	--radius-s: 0;
+}
+
+.code-runner {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	min-height: 100px;
+	width: 100%;
+
+	background: var(--background-secondary);
+	border-radius: var(--radius-m);
+	padding: 8px;
+
+	#cbpp-code {
+		max-height: 500px;
+		overflow-y: scroll;
+	}
+
+	#lang {
+		position: absolute;
+		top: 16px;
+		right: 28px;
+
+		background: #222;
+
+		/*vertical, horizontal, vertical */
+		padding: 2px 8px;
+		border-radius: var(--radius-s);
+	}
+
+	#output {
+		min-height: 40px;
+		max-height: 300px;
+		overflow-y: scroll;
+		background: var(--code-background);
+		border: var(--border-width) solid var(--window-border-color);
+		border-radius: var(--radius-s);
+		padding: 4px;
+
+		display: flex;
+		flex-direction: column;
+
+		.line {
+			display: flex;
+			width: 100%;
+		}
+	}
+
+	input {
+		min-height: 40px;
+		width: 100%;
+	}
+}
+
