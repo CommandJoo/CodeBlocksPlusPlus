@@ -16,6 +16,8 @@ html {
 
 	--radius-m: 0;
 	--radius-s: 0;
+
+	--text-faint: #444;
 }
 
 .code-runner {
@@ -29,11 +31,27 @@ html {
 
 	background: var(--background-secondary);
 	border-radius: var(--radius-m);
-	padding: 8px;
 
 	#cbpp-code {
 		max-height: 500px;
 		overflow-y: scroll;
+
+		counter-reset: step;
+		counter-increment: step 0;
+
+		.line.numbers::before {
+			content: counter(step);
+			counter-increment: step;
+			display: inline-block;
+			width: 1rem;
+			margin-right: 1rem;
+			text-align: right;
+			color: var(--text-faint);
+			user-select: none;
+
+			padding-right: 1rem;
+			border-right: 1px solid var(--window-border-color);
+		}
 	}
 
 	#lang {

@@ -4,12 +4,14 @@ import {bundledThemes} from "shiki";
 
 export interface CBPPSettings {
 	shikiTheme: string;
+	shikiLines: boolean
 	runnable: boolean;
 	allowInput: boolean;
 }
 
 export const DEFAULT_SETTINGS: CBPPSettings = {
 	shikiTheme: 'github-dark',
+	shikiLines: true,
 	runnable: true,
 	allowInput: true,
 };
@@ -44,6 +46,12 @@ export class CBPPSettingsTab extends PluginSettingTab {
 						await this.plugin.saveSettings();
 					})
 			);
+		new Setting(containerEl)
+			.setName('Show line Numbers')
+			.addToggle(toggle => toggle.setValue(this.plugin.settings.shikiLines).onChange(async (value) => {
+				this.plugin.settings.shikiLines = value;
+				await this.plugin.saveSettings();
+			}))
 
 		new Setting(containerEl).setName("Codeblock default Properties").setHeading();
 		new Setting(containerEl)
@@ -53,13 +61,14 @@ export class CBPPSettingsTab extends PluginSettingTab {
 				return toggle.setValue(this.plugin.settings.runnable).onChange(async (value) => {
 					this.plugin.settings.runnable = value;
 					await this.plugin.saveSettings();
+					this.display();
 				});
 			});
 		new Setting(containerEl)
 			.setName("Allow Input")
 			.setDesc("Allows the user to input their own data into the running codeblock.")
 			.addToggle((toggle) => {
-				return toggle.setValue(this.plugin.settings.allowInput).onChange(async (value) => {
+				return toggle.setDisabled(!this.plugin.settings.runnable).setValue(this.plugin.settings.runnable && this.plugin.settings.allowInput).onChange(async (value) => {
 					this.plugin.settings.allowInput = value;
 					await this.plugin.saveSettings();
 				});

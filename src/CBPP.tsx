@@ -16,6 +16,7 @@ export default class CodeBlocksPlusPlus extends Plugin {
 			const config = {
 				lang: "",
 				shikiTheme: this.settings.shikiTheme,
+				shikiLines: this.settings.shikiLines,
 				runnable: this.settings.runnable,
 				allowInput: this.settings.allowInput,
 			};

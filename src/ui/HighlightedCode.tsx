@@ -5,9 +5,10 @@ type HighlightedCodeProps = {
 	code: string;
 	language: string;
 	theme: string;
+	numbers: boolean;
 }
 
-export default function HighlightedCode({code, language, theme}: HighlightedCodeProps) {
+export default function HighlightedCode({code, language, theme, numbers}: HighlightedCodeProps) {
 	const [tokens, setTokens] = useState<ThemedToken[][]>([]);
 
 	useEffect(() => {
@@ -34,7 +35,7 @@ export default function HighlightedCode({code, language, theme}: HighlightedCode
     return <pre id={"cbpp-code"}>
 		<code>
 			{tokens.map((line,i) => {
-				return <span className="line" key={i}>
+				return <span className={"line "+(numbers ? "numbers" : "")} key={i}>
                         {line.map((token, j) => (
 							<span
 								key={j}

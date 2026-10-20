@@ -42,7 +42,7 @@ export default function CodeRunner({lines, config}: CodeRunnerProps) {
 	}, [proccess]);
 
 	return <div className={"code-runner"}>
-		<HighlightedCode code={source} language={config.lang} theme={config.shikiTheme}/>
+		<HighlightedCode code={source} language={config.lang} theme={config.shikiTheme} numbers={config.shikiLines}/>
 		<button id={"lang"} onClick={() => {
 			if(config.runnable) {
 				setOutputLines([]);
