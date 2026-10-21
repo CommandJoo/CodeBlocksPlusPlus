@@ -41,7 +41,7 @@ export default function CodeRunner({lines, config}: CodeRunnerProps) {
 		};
 	}, [proccess]);
 
-	return <div className={"code-runner"}>
+	return <div className={"code-runner"} style={{"padding": config.runnable ? "8px" : "0"}}>
 		<HighlightedCode code={source} language={config.lang} theme={config.shikiTheme} numbers={config.shikiLines}/>
 		<button id={"lang"} onClick={() => {
 			if(config.runnable) {
@@ -57,7 +57,7 @@ export default function CodeRunner({lines, config}: CodeRunnerProps) {
 				})}
 			</div>
 		}
-		{config.allowInput &&
+		{(config.allowInput && config.runnable) &&
 			<input type="text" placeholder={"Input"} onKeyDown={(e) => {
 				if (e.key === "Enter") {
 					proccess?.stdin?.write(Buffer.from(e.currentTarget.value, "utf-8"));
