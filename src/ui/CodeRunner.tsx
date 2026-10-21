@@ -19,10 +19,7 @@ export default function CodeRunner({lines, config}: CodeRunnerProps) {
 	useEffect(() => {
 		if (!proccess) return;
 
-		let onOut = (data: Buffer) => {
-			console.log(data);
-			setOutputLines(prev => [...prev, ...data.toString().split(/\r?\n/).filter(line => line.length > 0)]);
-		}
+		let onOut = (data: Buffer) => setOutputLines(prev => [...prev, ...data.toString().split(/\r?\n/).filter(line => line.length > 0)]);
 		let onClose = (code: number | null) => setOutputLines(prev => [...prev, "Process exited with code " + code]);
 
 		proccess.stdout?.on("data", onOut);

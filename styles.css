@@ -27,7 +27,6 @@ html {
 	flex-direction: column;
 	gap: 8px;
 
-	min-height: 100px;
 	width: 100%;
 
 	background: var(--background-secondary);

@@ -1,6 +1,7 @@
 import {App, Modal, Setting} from "obsidian";
 import {createRoot} from "react-dom/client";
 import {subtle} from "node:crypto";
+import {LanguageSuggest} from "../types";
 
 export class RegisterLanguageModal extends Modal {
 	constructor(app: App, onSubmit: (name: string, aliases: string[], executable: string, command: string, preamble: string, deletable: boolean) => void) {
@@ -16,11 +17,15 @@ export class RegisterLanguageModal extends Modal {
 		new Setting(this.contentEl)
 			.setName("Language name")
 			.setDesc("The main identifier to be used by custom Codeblocks")
-			.addText(text => text
-				.setPlaceholder("Language")
-				.onChange((line) => {
-					name = line.toLowerCase().trim();
-				})
+			.addSearch(text => {
+					text
+						.setPlaceholder("Language")
+
+						.onChange((line) => {
+							name = line.toLowerCase().trim();
+						});
+					new LanguageSuggest(this.app, text.inputEl);
+				}
 			);
 		new Setting(this.contentEl)
 			.setName("Aliases")

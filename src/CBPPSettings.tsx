@@ -2,7 +2,7 @@ import {App, Editor, MarkdownView, PluginSettingTab, Setting, SettingDefinitionI
 import {createContext, useContext, useSyncExternalStore} from "react";
 import CodeBlocksPlusPlus from "./CBPP";
 import {bundledThemes} from "shiki";
-import {CBPPSettings, RegisteredLanguage} from "./types";
+import {CBPPSettings, LanguageSuggest, RegisteredLanguage} from "./types";
 import {EditorView} from "@codemirror/view";
 import {StateEffect} from "@codemirror/state";
 import {createRoot, Root} from "react-dom/client";
@@ -82,14 +82,16 @@ export class CBPPSettingsTab extends PluginSettingTab {
 	openAddForm = () => {
 		new RegisterLanguageModal(this.app, async (name, aliases, executable, command, preamble, deletable) => {
 			const langs = this.plugin.settings.get().registeredLanguages;
-			await this.plugin.updateSettings({registeredLanguages: [...langs, {
+			await this.plugin.updateSettings({
+				registeredLanguages: [...langs, {
 					name,
 					aliases,
 					executable,
 					command,
 					preamble,
 					deletable
-				}]});
+				}]
+			});
 			this.update();
 		}).open();
 	};
@@ -100,7 +102,7 @@ export class CBPPSettingsTab extends PluginSettingTab {
 	) {
 		const langs = this.plugin.settings.get().registeredLanguages.map(lang =>
 			lang.name === originalName
-				? { ...lang, ...patch }
+				? {...lang, ...patch}
 				: lang
 		);
 
@@ -175,40 +177,44 @@ export class CBPPSettingsTab extends PluginSettingTab {
 
 						new Setting(row)
 							.setName("Name")
-							.addText(text => text.setValue(lang.name).then(text => {
-								let input = text.inputEl;
-								input.addEventListener("blur", (e) => {
-									this.updateLanguage(lang.name, {name: input.value});
-								})
-							}))
+							.addSearch(text => {
+									text.setValue(lang.name).setPlaceholder("Language").then(text => {
+										let input = text.inputEl;
+										input.addEventListener("blur", async (e) => {
+											await this.updateLanguage(lang.name, {name: input.value});
+										})
+									});
+									new LanguageSuggest(this.app, text.inputEl);
+								}
+							);
 						new Setting(row)
 							.setName("Aliases")
 							.addText(text => text.setValue(lang.aliases.join(", ")).then(text => {
 								let input = text.inputEl;
-								input.addEventListener("blur", (e) => {
-									this.updateLanguage(lang.name, {aliases: input.value.trim().toLowerCase().split(",").map(a => a.trim())});
+								input.addEventListener("blur", async (e) => {
+									await this.updateLanguage(lang.name, {aliases: input.value.trim().toLowerCase().split(",").map(a => a.trim())});
 								})
 							}))
 						new Setting(row)
 							.setName("Executable")
 							.addText(text => text.setValue(lang.executable).then(text => {
 								let input = text.inputEl;
-								input.addEventListener("blur", (e) => {
-									this.updateLanguage(lang.name, {executable: input.value});
+								input.addEventListener("blur", async (e) => {
+									await this.updateLanguage(lang.name, {executable: input.value});
 								})
 							}))
 							.addText(text => text.setValue(lang.command).then(text => {
 								let input = text.inputEl;
-								input.addEventListener("blur", (e) => {
-									this.updateLanguage(lang.name, {command: input.value});
+								input.addEventListener("blur", async (e) => {
+									await this.updateLanguage(lang.name, {command: input.value});
 								})
 							}))
 						new Setting(row)
 							.setName("Preamble")
 							.addTextArea(text => text.setValue(lang.preamble).then(text => {
 								let input = text.inputEl;
-								input.addEventListener("blur", (e) => {
-									this.updateLanguage(lang.name, {preamble: input.value});
+								input.addEventListener("blur", async (e) => {
+									await this.updateLanguage(lang.name, {preamble: input.value});
 								})
 							}))
 						new Setting(row)
@@ -216,7 +222,7 @@ export class CBPPSettingsTab extends PluginSettingTab {
 								const langs = this.plugin.settings.get().registeredLanguages
 									.filter(l => l.name !== lang.name);
 
-								await this.plugin.updateSettings({ registeredLanguages: langs });
+								await this.plugin.updateSettings({registeredLanguages: langs});
 								this.update();
 							}));
 					}
