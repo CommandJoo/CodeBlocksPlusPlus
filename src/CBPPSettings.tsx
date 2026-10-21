@@ -1,11 +1,8 @@
-import {App, Editor, MarkdownView, PluginSettingTab, Setting, SettingDefinitionItem, WorkspaceLeaf} from 'obsidian';
+import {App, PluginSettingTab, Setting, SettingDefinitionItem} from 'obsidian';
 import {createContext, useContext, useSyncExternalStore} from "react";
 import CodeBlocksPlusPlus from "./CBPP";
 import {bundledThemes} from "shiki";
 import {CBPPSettings, LanguageSuggest, RegisteredLanguage} from "./types";
-import {EditorView} from "@codemirror/view";
-import {StateEffect} from "@codemirror/state";
-import {createRoot, Root} from "react-dom/client";
 import {RegisterLanguageModal} from "./ui/RegisterLanguageModal";
 
 export const DEFAULT_SETTINGS: CBPPSettings = {
@@ -28,22 +25,6 @@ export const DEFAULT_SETTINGS: CBPPSettings = {
 const themes: Record<string, string> = Object.fromEntries(
 	Object.keys(bundledThemes).map((id) => [id, id])
 );
-
-export const rerenderEffect = StateEffect.define<void>();
-
-function rerenderBlocks(app: App) {
-	app.workspace.iterateAllLeaves((leaf: WorkspaceLeaf) => {
-		if (leaf.view instanceof MarkdownView) {
-			leaf.view.previewMode.rerender(true);
-		}
-	});
-	const view = app.workspace.getActiveViewOfType(MarkdownView);
-	const cm = (view?.editor as any)?.cm as EditorView | undefined;
-	if (cm) {
-		cm.dispatch({effects: rerenderEffect.of()});
-	}
-}
-
 
 export class ConfigStore<T> {
 	private listeners = new Set<() => void>();
@@ -180,43 +161,43 @@ export class CBPPSettingsTab extends PluginSettingTab {
 							.addSearch(text => {
 									text.setValue(lang.name).setPlaceholder("Language").then(text => {
 										let input = text.inputEl;
-										input.addEventListener("blur", async (e) => {
+										input.addEventListener("blur", async () => {
 											await this.updateLanguage(lang.name, {name: input.value});
 										})
 									});
 									new LanguageSuggest(this.app, text.inputEl);
 								}
-							);
+							).then(() => {});
 						new Setting(row)
 							.setName("Aliases")
 							.addText(text => text.setValue(lang.aliases.join(", ")).then(text => {
 								let input = text.inputEl;
-								input.addEventListener("blur", async (e) => {
+								input.addEventListener("blur", async () => {
 									await this.updateLanguage(lang.name, {aliases: input.value.trim().toLowerCase().split(",").map(a => a.trim())});
 								})
-							}))
+							})).then(() => {})
 						new Setting(row)
 							.setName("Executable")
 							.addText(text => text.setValue(lang.executable).then(text => {
 								let input = text.inputEl;
-								input.addEventListener("blur", async (e) => {
+								input.addEventListener("blur", async () => {
 									await this.updateLanguage(lang.name, {executable: input.value});
 								})
 							}))
 							.addText(text => text.setValue(lang.command).then(text => {
 								let input = text.inputEl;
-								input.addEventListener("blur", async (e) => {
+								input.addEventListener("blur", async () => {
 									await this.updateLanguage(lang.name, {command: input.value});
 								})
-							}))
+							})).then(() => {});
 						new Setting(row)
 							.setName("Preamble")
 							.addTextArea(text => text.setValue(lang.preamble).then(text => {
 								let input = text.inputEl;
-								input.addEventListener("blur", async (e) => {
+								input.addEventListener("blur", async () => {
 									await this.updateLanguage(lang.name, {preamble: input.value});
 								})
-							}))
+							})).then(() => {})
 						new Setting(row)
 							.addButton(button => button.setButtonText("Remove").setCta().onClick(async () => {
 								const langs = this.plugin.settings.get().registeredLanguages
@@ -224,7 +205,7 @@ export class CBPPSettingsTab extends PluginSettingTab {
 
 								await this.plugin.updateSettings({registeredLanguages: langs});
 								this.update();
-							}));
+							})).then(() => {});
 					}
 				})),
 				addItem: {

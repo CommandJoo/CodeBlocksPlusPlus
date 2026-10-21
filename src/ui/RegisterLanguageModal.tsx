@@ -1,6 +1,4 @@
 import {App, Modal, Setting} from "obsidian";
-import {createRoot} from "react-dom/client";
-import {subtle} from "node:crypto";
 import {LanguageSuggest} from "../types";
 
 export class RegisterLanguageModal extends Modal {
@@ -20,13 +18,14 @@ export class RegisterLanguageModal extends Modal {
 			.addSearch(text => {
 					text
 						.setPlaceholder("Language")
-
 						.onChange((line) => {
 							name = line.toLowerCase().trim();
-						});
+						}).then(() => {
+					});
 					new LanguageSuggest(this.app, text.inputEl);
 				}
-			);
+			).then(() => {
+		});
 		new Setting(this.contentEl)
 			.setName("Aliases")
 			.setDesc("Aliases for the language, seperated by comma")
@@ -35,7 +34,8 @@ export class RegisterLanguageModal extends Modal {
 				.onChange((line) => {
 					aliases = line.trim().toLowerCase().split(",").map((a) => a.trim());
 				})
-			);
+			).then(() => {
+		});
 		new Setting(this.contentEl)
 			.setName("Executable")
 			.setDesc("The path to the executable of the interpreter")
@@ -49,7 +49,8 @@ export class RegisterLanguageModal extends Modal {
 				.setPlaceholder("-...")
 				.onChange((line) => {
 					command = line.toLowerCase().trim();
-				}));
+				})).then(() => {
+		});
 		new Setting(this.contentEl)
 			.setName("Preamble")
 			.setDesc("Code that always runs before everything else in this language")
@@ -58,7 +59,8 @@ export class RegisterLanguageModal extends Modal {
 				.onChange((line) => {
 					command = line.toLowerCase().trim();
 				})
-			);
+			).then(() => {
+		});
 		new Setting(this.contentEl)
 			.addButton(button => button
 				.setCta()
@@ -66,6 +68,7 @@ export class RegisterLanguageModal extends Modal {
 				.onClick(() => {
 					this.close();
 					onSubmit(name, aliases, executable, command, preamble, deletable);
-				}))
+				})).then(() => {
+		})
 	}
 }

@@ -25,7 +25,7 @@ export type CodeBlockConfig = {
 	runnable: boolean | undefined;
 	allowInput: boolean | undefined;
 };
-const languages = Object.entries(bundledLanguages).map(([id, lang]) => (id))
+const languages = Object.entries(bundledLanguages).map(([id]) => (id))
 
 export class LanguageSuggest extends AbstractInputSuggest<string> {
 	protected getSuggestions(query: string): string[] | Promise<string[]> {
@@ -34,7 +34,7 @@ export class LanguageSuggest extends AbstractInputSuggest<string> {
 		);
 	}
 
-	selectSuggestion(value: string, evt: MouseEvent | KeyboardEvent) {
+	selectSuggestion(value: string) {
 		this.setValue(value);
 		this.close();
 	}

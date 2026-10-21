@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {BundledLanguage, codeToTokens, createHighlighter, ThemedToken} from "shiki";
+import {BundledLanguage, codeToTokens, ThemedToken} from "shiki";
 import {CodeBlockConfig} from "../types";
 import {useSettings} from "../CBPPSettings";
 

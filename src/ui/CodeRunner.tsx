@@ -11,38 +11,38 @@ type CodeRunnerProps = {
 
 export default function CodeRunner({lines, config}: CodeRunnerProps) {
 	const settings = useSettings();
-	const [resolvedLanguage, setResolvedLanguage] = useState(resolveRegisteredLanguage());
-	const [proccess, setProcess] = useState<ChildProcess>();
+	const [resolvedLanguage, _] = useState(resolveRegisteredLanguage());
+	const [process, setProcess] = useState<ChildProcess>();
 	const [outputLines, setOutputLines] = useState<string[]>([]);
 	const source = lines.join("\n");
 
 	useEffect(() => {
-		if (!proccess) return;
+		if (!process) return;
 
 		let onOut = (data: Buffer) => setOutputLines(prev => [...prev, ...data.toString().split(/\r?\n/).filter(line => line.length > 0)]);
 		let onClose = (code: number | null) => setOutputLines(prev => [...prev, "Process exited with code " + code]);
 
-		proccess.stdout?.on("data", onOut);
-		proccess.stderr?.on("data", onOut);
-		proccess.on("close", onClose);
+		process.stdout?.on("data", onOut);
+		process.stderr?.on("data", onOut);
+		process.on("close", onClose);
 
 		return () => {
-			proccess.stdout?.off("data", onOut);
-			proccess.stderr?.off("data", onOut);
-			proccess.off("close", onClose);
-			if (proccess.exitCode === null && !proccess.killed) proccess.kill("SIGTERM");
+			process.stdout?.off("data", onOut);
+			process.stderr?.off("data", onOut);
+			process.off("close", onClose);
+			if (process.exitCode === null && !process.killed) process.kill("SIGTERM");
 		};
-	}, [proccess]);
+	}, [process]);
 
 	useEffect(() => {
-		if (!proccess) return;
+		if (!process) return;
 
 		return () => {
-			if (proccess.exitCode === null && !proccess.killed) {
-				proccess.kill("SIGTERM");
+			if (process.exitCode === null && !process.killed) {
+				process.kill("SIGTERM");
 			}
 		};
-	}, [proccess]);
+	}, [process]);
 
 	function resolveRegisteredLanguage(): RegisteredLanguage | undefined {
 		let lang: undefined | RegisteredLanguage = undefined;
@@ -86,7 +86,7 @@ export default function CodeRunner({lines, config}: CodeRunnerProps) {
 		{(config.allowInput !== undefined ? config.allowInput : settings.allowInput && (config.runnable !== undefined ? config.runnable : settings.runnable)) &&
 			<input type="text" placeholder={"Input"} onKeyDown={(e) => {
 				if (e.key === "Enter") {
-					proccess?.stdin?.write(Buffer.from(e.currentTarget.value, "utf-8"));
+					process?.stdin?.write(Buffer.from(e.currentTarget.value, "utf-8"));
 					e.currentTarget.value = "";
 				}
 			}}/>
