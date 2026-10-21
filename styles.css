@@ -21,6 +21,7 @@ html {
 }
 
 .code-runner {
+	margin: 10px 0;
 	position: relative;
 	display: flex;
 	flex-direction: column;
@@ -35,6 +36,8 @@ html {
 	#cbpp-code {
 		max-height: 500px;
 		overflow-y: scroll;
+
+		margin: 0;
 
 		counter-reset: step;
 		counter-increment: step 0;
@@ -88,5 +91,20 @@ html {
 		min-height: 40px;
 		width: 100%;
 	}
+}
+
+.cbpp-language-entry {
+	border: none;
+}
+
+.cbpp-language-entry .setting-item {
+}
+
+.cbpp-language-entry .setting-item-info {
+	min-width: 0;
+}
+
+.cbpp-language-entry .setting-item-control {
+	gap: 12px;
 }
 

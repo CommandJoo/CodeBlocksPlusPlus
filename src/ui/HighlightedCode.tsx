@@ -1,14 +1,15 @@
 import {useEffect, useState} from "react";
 import {BundledLanguage, codeToTokens, createHighlighter, ThemedToken} from "shiki";
+import {CodeBlockConfig} from "../types";
+import {useSettings} from "../CBPPSettings";
 
 type HighlightedCodeProps = {
 	code: string;
-	language: string;
-	theme: string;
-	numbers: boolean;
+	config: CodeBlockConfig;
 }
 
-export default function HighlightedCode({code, language, theme, numbers}: HighlightedCodeProps) {
+export default function HighlightedCode({code, config}: HighlightedCodeProps) {
+	const settings = useSettings();
 	const [tokens, setTokens] = useState<ThemedToken[][]>([]);
 
 	useEffect(() => {
@@ -16,8 +17,8 @@ export default function HighlightedCode({code, language, theme, numbers}: Highli
 
 		async function highlight() {
 			const result = await codeToTokens(code, {
-				lang: language as BundledLanguage,
-				theme
+				lang: config.lang as BundledLanguage,
+				theme: config.theme ? config.theme : settings.shikiTheme,
 			});
 
 			if (!cancelled) {
@@ -30,12 +31,12 @@ export default function HighlightedCode({code, language, theme, numbers}: Highli
 		return () => {
 			cancelled = true;
 		};
-	}, [code, language]);
+	}, [code, config.lang, settings]);
 
     return <pre id={"cbpp-code"}>
 		<code>
 			{tokens.map((line,i) => {
-				return <span className={"line "+(numbers ? "numbers" : "")} key={i}>
+				return <span className={"line "+((config.numbers !== undefined ? config.numbers : settings.shikiLines) ? "numbers" : "")} key={i}>
                         {line.map((token, j) => (
 							<span
 								key={j}

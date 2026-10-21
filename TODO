@@ -1,15 +1,6 @@
 Add Options for
 - Codeblock size (always full size, or scroll at threshold)
 
-Addable custom languages with
-- prefix/alias
-- interpreter
-- subcommand
-- codeblock preamble
-
-Add parsing for specific settings
-- @ settings
-
 Add buttons for
 - Run
 - Stop
