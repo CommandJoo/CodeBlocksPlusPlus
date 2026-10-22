@@ -56,6 +56,16 @@ export default class CodeBlocksPlusPlus extends Plugin {
 			const rawLines = source.split("\n");
 			const [config, lines] = this.codeToMetadata(rawLines);
 
+			const sectionInfo = ctx.getSectionInfo(el);
+			let sectionLines: string[] = [];
+			sectionInfo?.text.split("\n").forEach((line, i) => {
+				if(i >= sectionInfo?.lineStart && i <= sectionInfo?.lineEnd) {
+					sectionLines.push(line);
+				}
+			})
+			console.log(sectionInfo?.lineStart, sectionInfo?.lineEnd);
+			console.log(sectionLines);
+
 			root.render(
 				<StoreContext.Provider value={this.settings}>
 					<CodeRunner lines={lines} config={config} />

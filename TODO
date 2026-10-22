@@ -5,3 +5,5 @@ Add buttons for
 - Run
 - Stop
 - Copy
+
+Add Setting for unsafe metadata by looking at SectionInfo
