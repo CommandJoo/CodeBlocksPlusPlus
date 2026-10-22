@@ -10,6 +10,7 @@ export const DEFAULT_SETTINGS: CBPPSettings = {
 	shikiLines: true,
 	runnable: true,
 	allowInput: true,
+	allowInlineMetadata: true,
 	registeredLanguages: [
 		{
 			name: "javascript",
@@ -80,7 +81,7 @@ export class CBPPSettingsTab extends PluginSettingTab {
 	async updateLanguage(
 		originalName: string,
 		patch: Partial<RegisteredLanguage>
-	) {
+	): Promise<void> {
 		const langs = this.plugin.settings.get().registeredLanguages.map(lang =>
 			lang.name === originalName
 				? {...lang, ...patch}
@@ -138,76 +139,103 @@ export class CBPPSettingsTab extends PluginSettingTab {
 							key: "allowInput",
 							disabled: () => !this.plugin.settings.get().runnable,
 						}
+					},
+					{
+						name: "Allow inline Metadata",
+						desc: "Descides if Metadata like language can unsafely be parsed directly behind the cbpp prefix",
+						control: {
+							type: "toggle",
+							key: "allowInlineMetadata",
+						}
 					}
 				]
 			},
 			{
 				type: "list",
 				heading: "Registered Languages",
-				items: this.plugin.settings.get().registeredLanguages.map((lang) => ({
-					name: lang.name.substring(0, 1).toUpperCase() + lang.name.substring(1, lang.name.length),
-					searchable: true,
-					render: (setting: Setting) => {
-						const container = setting.settingEl;
-						container.findAll(".cbpp-language-entry")
-							.forEach(el => el.remove());
+				items: this.plugin.settings.get().registeredLanguages.map((lang) => {
+					return ({
+						name: lang.name.substring(0, 1).toUpperCase() + lang.name.substring(1, lang.name.length),
+						searchable: true,
+						render: (setting: Setting) => {
+							const container = setting.settingEl;
+							container.findAll(".cbpp-language-entry")
+								.forEach(el => el.remove());
 
-						const row = container.createDiv({
-							cls: "cbpp-language-entry"
-						});
+							const row = container.createDiv({
+								cls: "cbpp-language-entry"
+							});
 
-						new Setting(row)
-							.setName("Name")
-							.addSearch(text => {
-									text.setValue(lang.name).setPlaceholder("Language").then(text => {
+							new Setting(row)
+								.setName("Name")
+								.addSearch(text => {
+										text.setValue(lang.name).setPlaceholder("Language").then(text => {
+											let input = text.inputEl;
+											input.addEventListener("blur", () => {
+												void this.updateLanguage(lang.name, {name: input.value});
+											})
+										});
+										new LanguageSuggest(this.app, text.inputEl);
+									}
+								).then(() => {
+							});
+							new Setting(row)
+								.setName("Aliases")
+								.addText(text => text
+									.setPlaceholder("\"alias1\", \"alias2\", ...")
+									.setValue(lang.aliases.join(", "))
+									.then(text => {
 										let input = text.inputEl;
-										input.addEventListener("blur", async () => {
-											await this.updateLanguage(lang.name, {name: input.value});
+										input.addEventListener("blur", () => {
+											void this.updateLanguage(lang.name, {aliases: input.value.trim().toLowerCase().split(",").map(a => a.trim())});
 										})
-									});
-									new LanguageSuggest(this.app, text.inputEl);
-								}
-							).then(() => {});
-						new Setting(row)
-							.setName("Aliases")
-							.addText(text => text.setValue(lang.aliases.join(", ")).then(text => {
-								let input = text.inputEl;
-								input.addEventListener("blur", async () => {
-									await this.updateLanguage(lang.name, {aliases: input.value.trim().toLowerCase().split(",").map(a => a.trim())});
-								})
-							})).then(() => {})
-						new Setting(row)
-							.setName("Executable")
-							.addText(text => text.setValue(lang.executable).then(text => {
-								let input = text.inputEl;
-								input.addEventListener("blur", async () => {
-									await this.updateLanguage(lang.name, {executable: input.value});
-								})
-							}))
-							.addText(text => text.setValue(lang.command).then(text => {
-								let input = text.inputEl;
-								input.addEventListener("blur", async () => {
-									await this.updateLanguage(lang.name, {command: input.value});
-								})
-							})).then(() => {});
-						new Setting(row)
-							.setName("Preamble")
-							.addTextArea(text => text.setValue(lang.preamble).then(text => {
-								let input = text.inputEl;
-								input.addEventListener("blur", async () => {
-									await this.updateLanguage(lang.name, {preamble: input.value});
-								})
-							})).then(() => {})
-						new Setting(row)
-							.addButton(button => button.setButtonText("Remove").setCta().onClick(async () => {
-								const langs = this.plugin.settings.get().registeredLanguages
-									.filter(l => l.name !== lang.name);
+									})).then(() => {
+							})
+							new Setting(row)
+								.setName("Executable")
+								.addText(text => text
+									.setPlaceholder("/path/to/executable")
+									.setValue(lang.executable)
+									.then(text => {
+										let input = text.inputEl;
+										input.addEventListener("blur", () => {
+											void this.updateLanguage(lang.name, {executable: input.value});
+										})
+									}))
+								.addText(text => text
+									.setPlaceholder("-...")
+									.setValue(lang.command)
+									.then(text => {
+										let input = text.inputEl;
+										input.addEventListener("blur", () => {
+											void this.updateLanguage(lang.name, {command: input.value});
+										})
+									})).then(() => {
+							});
+							new Setting(row)
+								.setName("Preamble")
+								.addTextArea(text => text
+									.setPlaceholder("Custom code")
+									.setValue(lang.preamble)
+									.then(text => {
+										let input = text.inputEl;
+										input.addEventListener("blur", () => {
+											void this.updateLanguage(lang.name, {preamble: input.value});
+										})
+									})).then(() => {
+							})
+							new Setting(row)
+								.addButton(button => button.setButtonText("Remove").setCta().onClick(async () => {
+									const langs = this.plugin.settings.get().registeredLanguages
+										.filter(l => l.name !== lang.name);
 
-								await this.plugin.updateSettings({registeredLanguages: langs});
-								this.update();
-							})).then(() => {});
-					}
-				})),
+									await this.plugin.updateSettings({registeredLanguages: langs});
+									this.update();
+								})).then(() => {
+							});
+						}
+					});
+				}),
 				addItem: {
 					name: 'Add folder',
 					action: () => {
@@ -218,8 +246,8 @@ export class CBPPSettingsTab extends PluginSettingTab {
 		];
 	}
 
-	getControlValue(key: string): unknown {
-		return (this.plugin.settings.get() as any)[key];
+	getControlValue<K extends keyof CBPPSettings>(key: K): CBPPSettings[K] {
+		return this.plugin.settings.get()[key];
 	}
 
 	async setControlValue(key: string, value: unknown): Promise<void> {

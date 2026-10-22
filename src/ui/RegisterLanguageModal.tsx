@@ -2,7 +2,7 @@ import {App, Modal, Setting} from "obsidian";
 import {LanguageSuggest} from "../types";
 
 export class RegisterLanguageModal extends Modal {
-	constructor(app: App, onSubmit: (name: string, aliases: string[], executable: string, command: string, preamble: string, deletable: boolean) => void) {
+	constructor(app: App, onSubmit: (name: string, aliases: string[], executable: string, command: string, preamble: string, deletable: boolean) => Promise<void>) {
 		super(app);
 		let name = '';
 		let aliases: string[] = [];
@@ -11,10 +11,10 @@ export class RegisterLanguageModal extends Modal {
 		let preamble = '';
 		const deletable = true;
 
-		this.setTitle("Register a Language");
+		this.setTitle("Register a language");
 		new Setting(this.contentEl)
 			.setName("Language name")
-			.setDesc("The main identifier to be used by custom Codeblocks")
+			.setDesc("The main identifier to be used by custom codeblocks")
 			.addSearch(text => {
 					text
 						.setPlaceholder("Language")
@@ -30,7 +30,7 @@ export class RegisterLanguageModal extends Modal {
 			.setName("Aliases")
 			.setDesc("Aliases for the language, seperated by comma")
 			.addText(text => text
-				.setPlaceholder("alias1, alias2, ...")
+				.setPlaceholder("\"alias1\", \"alias2\", ...")
 				.onChange((line) => {
 					aliases = line.trim().toLowerCase().split(",").map((a) => a.trim());
 				})
@@ -55,7 +55,7 @@ export class RegisterLanguageModal extends Modal {
 			.setName("Preamble")
 			.setDesc("Code that always runs before everything else in this language")
 			.addTextArea(text => text
-				.setPlaceholder("Custom Code")
+				.setPlaceholder("Custom code")
 				.onChange((line) => {
 					command = line.toLowerCase().trim();
 				})
@@ -65,9 +65,9 @@ export class RegisterLanguageModal extends Modal {
 			.addButton(button => button
 				.setCta()
 				.setButtonText("Register")
-				.onClick(() => {
+				.onClick(async () => {
 					this.close();
-					onSubmit(name, aliases, executable, command, preamble, deletable);
+					await onSubmit(name, aliases, executable, command, preamble, deletable);
 				})).then(() => {
 		})
 	}

@@ -7,11 +7,12 @@ import {useSettings} from "../CBPPSettings";
 type CodeRunnerProps = {
 	lines: string[];
 	config: CodeBlockConfig;
+	metadataConfig: Partial<CodeBlockConfig>;
 }
 
-export default function CodeRunner({lines, config}: CodeRunnerProps) {
+export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerProps) {
 	const settings = useSettings();
-	const [resolvedLanguage, _] = useState(resolveRegisteredLanguage());
+	const [resolvedLanguage] = useState(resolveRegisteredLanguage());
 	const [process, setProcess] = useState<ChildProcess>();
 	const [outputLines, setOutputLines] = useState<string[]>([]);
 	const source = lines.join("\n");
@@ -62,6 +63,7 @@ export default function CodeRunner({lines, config}: CodeRunnerProps) {
 
 	function runCode() {
 		if (!resolvedLanguage) return;
+		if(!resolvedLanguage.executable) return;
 		let proc: ChildProcess = spawn(resolvedLanguage.executable, [resolvedLanguage.command, resolvedLanguage.preamble+"\n"+source]);
 		setProcess(proc);
 	}
@@ -69,7 +71,7 @@ export default function CodeRunner({lines, config}: CodeRunnerProps) {
 
 	return <div className={"code-runner"}
 	            style={{"padding": (config.runnable !== undefined ? config.runnable : settings.runnable) ? "8px" : "0"}}>
-		<HighlightedCode code={source} config={config}/>
+		<HighlightedCode code={source} config={settings.allowInlineMetadata ? {...config, ...metadataConfig} : config}/>
 		<button id={"lang"} onClick={() => {
 			if (config.runnable !== undefined ? config.runnable : settings.runnable) {
 				setOutputLines([]);

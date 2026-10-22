@@ -15,6 +15,7 @@ export type CBPPSettings = {
 	shikiLines: boolean
 	runnable: boolean;
 	allowInput: boolean;
+	allowInlineMetadata: boolean;
 	registeredLanguages: RegisteredLanguage[];
 };
 

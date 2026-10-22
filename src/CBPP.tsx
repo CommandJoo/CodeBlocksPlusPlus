@@ -1,4 +1,4 @@
-import {MarkdownRenderChild, Plugin} from 'obsidian';
+import {MarkdownRenderChild, MarkdownSectionInformation, Plugin} from 'obsidian';
 import {CBPPSettingsTab, ConfigStore, DEFAULT_SETTINGS, StoreContext} from "./CBPPSettings";
 import {createRoot} from "react-dom/client";
 import CodeRunner from "./ui/CodeRunner";
@@ -8,6 +8,30 @@ const METADATA_PREFIX = "@cbpp:"
 
 export default class CodeBlocksPlusPlus extends Plugin {
 	settings!: ConfigStore<CBPPSettings>;
+
+	sectionInfoToText(info: MarkdownSectionInformation): string[] {
+		let lines: string[] = [];
+		info?.text.split("\n").forEach((line, i) => {
+			if(i >= info.lineStart && i <= info.lineEnd) {
+				lines.push(line);
+			}
+		})
+		return lines;
+	}
+
+	inlineToMetadata(info: MarkdownSectionInformation): Partial<CodeBlockConfig> {
+		let lines = this.sectionInfoToText(info);
+		const CODEBLOCK_PREFIX = "```cbpp";
+		if(!lines[0]) return {};
+		let inline = lines[0].substring(CODEBLOCK_PREFIX.length).trim().split(" ");
+		if(inline[0]) {
+			return {
+				lang: inline[0],
+			};
+		}else {
+			return {};
+		}
+	}
 
 	codeToMetadata(source: string[]): [CodeBlockConfig, string[]] {
 		let lines = [];
@@ -55,20 +79,13 @@ export default class CodeBlocksPlusPlus extends Plugin {
 
 			const rawLines = source.split("\n");
 			const [config, lines] = this.codeToMetadata(rawLines);
+			const info = ctx.getSectionInfo(el)
+			const metaConfig: Partial<CodeBlockConfig> = info ? this.inlineToMetadata(info) : {};
 
-			const sectionInfo = ctx.getSectionInfo(el);
-			let sectionLines: string[] = [];
-			sectionInfo?.text.split("\n").forEach((line, i) => {
-				if(i >= sectionInfo?.lineStart && i <= sectionInfo?.lineEnd) {
-					sectionLines.push(line);
-				}
-			})
-			console.log(sectionInfo?.lineStart, sectionInfo?.lineEnd);
-			console.log(sectionLines);
 
 			root.render(
 				<StoreContext.Provider value={this.settings}>
-					<CodeRunner lines={lines} config={config} />
+					<CodeRunner lines={lines} config={config} metadataConfig={metaConfig}/>
 				</StoreContext.Provider>
 			);
 
@@ -84,15 +101,19 @@ export default class CodeBlocksPlusPlus extends Plugin {
 	onunload() {
 	}
 
+	loadData(): Promise<CBPPSettings> {
+		return super.loadData();
+	}
+
 
 	async loadSettings() {
-		this.settings = new ConfigStore(Object.assign({}, DEFAULT_SETTINGS, await this.loadData()));
+		this.settings = new ConfigStore<CBPPSettings>(Object.assign({}, DEFAULT_SETTINGS, await this.loadData()));
 		this.addSettingTab(new CBPPSettingsTab(this.app, this));
 	}
 
-	async updateSettings(patch: Partial<CBPPSettings>) {
+	async updateSettings(patch: Partial<CBPPSettings>){
 		const next = { ...this.settings.get(), ...patch };
-		this.settings.set(next);          // every mounted block re-renders
+		this.settings.set(next);
 		await this.saveData(next);
 	}
 }
