@@ -47,12 +47,13 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 
 	function resolveRegisteredLanguage(): RegisteredLanguage | undefined {
 		let lang: undefined | RegisteredLanguage = undefined;
+		let conf = settings.allowInlineMetadata ? {...config, ...metadataConfig} : config;
 		for (let language of settings.registeredLanguages) {
-			if (language.name === config.lang.trim()) {
+			if (language.name === conf.lang.trim()) {
 				lang = language;
 				break;
 			} else {
-				if (language.aliases.find(l => l === config.lang.trim())) {
+				if (language.aliases.find(l => l === conf.lang.trim())) {
 					lang = language;
 					break;
 				}
