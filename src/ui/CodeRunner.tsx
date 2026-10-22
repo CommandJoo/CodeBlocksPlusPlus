@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {ChildProcess, spawn} from "node:child_process";
+import {ChildProcess, ChildProcessWithoutNullStreams, spawn} from "node:child_process";
 import HighlightedCode from "./HighlightedCode";
 import {CodeBlockConfig, RegisteredLanguage} from "../types";
 import {useSettings} from "../CBPPSettings";
@@ -12,16 +12,16 @@ type CodeRunnerProps = {
 
 export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerProps) {
 	const settings = useSettings();
-	const [resolvedLanguage] = useState(resolveRegisteredLanguage());
-	const [process, setProcess] = useState<ChildProcess>();
+	const [resolvedLanguage] = useState<RegisteredLanguage|undefined>(resolveRegisteredLanguage());
+	const [process, setProcess] = useState<ChildProcess|undefined>(undefined);
 	const [outputLines, setOutputLines] = useState<string[]>([]);
 	const source = lines.join("\n");
 
 	useEffect(() => {
 		if (!process) return;
 
-		let onOut = (data: Buffer) => setOutputLines(prev => [...prev, ...data.toString().split(/\r?\n/).filter(line => line.length > 0)]);
-		let onClose = (code: number | null) => setOutputLines(prev => [...prev, "Process exited with code " + code]);
+		let onOut = (data: Buffer): void => setOutputLines((prev: string[]) => [...prev, ...data.toString().split(/\r?\n/).filter(line => line.length > 0)]);
+		let onClose = (code: number | null): void => setOutputLines((prev: string[]) => [...prev, "Process exited with code " + code]);
 
 		process.stdout?.on("data", onOut);
 		process.stderr?.on("data", onOut);
@@ -65,7 +65,7 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 	function runCode() {
 		if (!resolvedLanguage) return;
 		if(!resolvedLanguage.executable) return;
-		let proc: ChildProcess = spawn(resolvedLanguage.executable, [resolvedLanguage.command, resolvedLanguage.preamble+"\n"+source]);
+		const proc: ChildProcessWithoutNullStreams = spawn(resolvedLanguage.executable, [resolvedLanguage.command, resolvedLanguage.preamble+"\n"+source]);
 		setProcess(proc);
 	}
 

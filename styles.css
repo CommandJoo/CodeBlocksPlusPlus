@@ -1,10 +1,10 @@
 .markdown-source-view.mod-cm6 .cm-embed-block:has(.code-runner) .edit-block-button {
-	display: none !important;
+	display: none;
 }
 
 .markdown-source-view.mod-cm6 .cm-embed-block:has(.code-runner):hover {
-	box-shadow: none !important;
-	border-radius: 0 !important;
+	box-shadow: none;
+	border-radius: 0;
 }
 
 html {
