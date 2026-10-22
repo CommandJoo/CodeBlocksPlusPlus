@@ -22,7 +22,17 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 	useEffect(() => {
 		if (!process) return;
 
-		let onOut = (data: Buffer): void => setOutputLines((prev: string[]) => [...prev, ...data.toString().split(/\r?\n/).filter(line => line.length > 0)]);
+		const onOut = (data: Buffer): void => {
+			const lines: string[] = data
+				.toString()
+				.split(/\r?\n/)
+				.filter((line: string) => line.length > 0);
+
+			setOutputLines((prev: string[]): string[] => [
+				...prev,
+				...lines
+			]);
+		};
 		let onClose = (code: number | null): void => setOutputLines((prev: string[]) => [...prev, "Process exited with code " + code]);
 
 		process.stdout?.on("data", onOut);
@@ -57,7 +67,7 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 	function runCode() {
 		if (!resolvedLanguage) return;
 		if(!resolvedLanguage.executable) return;
-		const proc: ChildProcessWithoutNullStreams = spawn(resolvedLanguage.executable, [resolvedLanguage.command, resolvedLanguage.preamble+"\n"+source]);
+		const proc: ChildProcessWithoutNullStreams = spawn(resolvedLanguage.executable, [resolvedLanguage.command, resolvedLanguage.preamble+"\n"+source], {shell: false});
 		setProcess(proc);
 	}
 

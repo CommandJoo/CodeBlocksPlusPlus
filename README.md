@@ -54,3 +54,5 @@ in the Settings tab of this Plugin
 
 ## Credits
 - [Shiki](https://github.com/shikijs/shiki), used for Syntax highlighting in rendered Codeblocks
+
+## If this plugin has helped you consider giving it a ⭐

@@ -1,7 +1,7 @@
 import {App, PluginSettingTab, Setting, SettingDefinitionItem} from 'obsidian';
 import {createContext, useContext, useSyncExternalStore} from "react";
 import CodeBlocksPlusPlus from "./CBPP";
-import {bundledThemes} from "shiki";
+import {bundledThemesInfo} from "shiki";
 import {CBPPSettings, LanguageSuggest, RegisteredLanguage} from "./types";
 import {RegisterLanguageModal} from "./ui/RegisterLanguageModal";
 
@@ -40,7 +40,7 @@ export const DEFAULT_SETTINGS: CBPPSettings = {
 };
 
 const themes: Record<string, string> = Object.fromEntries(
-	Object.keys(bundledThemes).map((id) => [id, id])
+	Object.keys(bundledThemesInfo).map((id) => [id, id])
 );
 
 export class ConfigStore<T> {

@@ -1,5 +1,5 @@
 import {AbstractInputSuggest} from "obsidian";
-import {bundledLanguages} from "shiki";
+import {bundledLanguagesInfo} from "shiki";
 
 export type RegisteredLanguage = {
 	deletable: boolean;
@@ -26,7 +26,7 @@ export type CodeBlockConfig = {
 	runnable: boolean | undefined;
 	allowInput: boolean | undefined;
 };
-const languages = Object.entries(bundledLanguages).map(([id]) => (id))
+const languages = Object.entries(bundledLanguagesInfo).map(([id]) => (id))
 
 export class LanguageSuggest extends AbstractInputSuggest<string> {
 	protected getSuggestions(query: string): string[] | Promise<string[]> {

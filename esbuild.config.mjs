@@ -16,6 +16,7 @@ const context = await esbuild.context({
 	},
 	entryPoints: ['src/CBPP.tsx'],
 	bundle: true,
+	metafile: true,
 	external: [
 		'obsidian',
 		'electron',

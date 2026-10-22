@@ -1,5 +1,9 @@
-import {useEffect, useState} from "react";
-import {BundledLanguage, codeToTokens, ThemedToken} from "shiki";
+import { useEffect, useState } from "react";
+import {
+	BundledLanguage,
+	codeToTokens,
+	type ThemedToken
+} from "shiki";
 import {CodeBlockConfig} from "../types";
 import {useSettings} from "../CBPPSettings";
 
@@ -7,6 +11,7 @@ type HighlightedCodeProps = {
 	code: string;
 	config: CodeBlockConfig;
 }
+
 
 export default function HighlightedCode({code, config}: HighlightedCodeProps) {
 	const settings = useSettings();
@@ -16,13 +21,19 @@ export default function HighlightedCode({code, config}: HighlightedCodeProps) {
 		let cancelled = false;
 
 		async function highlight() {
-			const result = await codeToTokens(code, {
-				lang: config.lang as BundledLanguage,
-				theme: config.theme ? config.theme : settings.shikiTheme,
-			});
+			try {
+				const theme = config.theme || settings.shikiTheme;
 
-			if (!cancelled) {
-				setTokens(result.tokens);
+				const result = await codeToTokens(code, {
+					lang: config.lang as BundledLanguage,
+					theme,
+				});
+
+				if (!cancelled) {
+					setTokens(result.tokens);
+				}
+			} catch (error) {
+				console.error("CodeBlocks++ highlighting failed:", error);
 			}
 		}
 

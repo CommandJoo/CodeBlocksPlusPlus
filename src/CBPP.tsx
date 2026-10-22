@@ -73,7 +73,6 @@ export default class CodeBlocksPlusPlus extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-
 		this.registerMarkdownCodeBlockProcessor('cbpp', (source, el, ctx) => {
 			const root = createRoot(el);
 
