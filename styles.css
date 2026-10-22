@@ -169,7 +169,7 @@ html {
 		}
 	}
 
-	#output {
+	.output {
 		min-height: 40px;
 		max-height: 300px;
 		overflow-y: scroll;

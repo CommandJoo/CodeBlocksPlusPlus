@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import type {ChildProcessWithoutNullStreams} from "node:child_process";
-import {spawn} from "node:child_process";
+import type {ChildProcessWithoutNullStreams} from "child_process";
+import {spawn} from "child_process";
 import HighlightedCode from "./HighlightedCode";
 import {CodeBlockConfig, RegisteredLanguage} from "../types";
 import {useSettings} from "../CBPPSettings";
@@ -35,14 +35,14 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 			setOutputLines((prev: string[]) => [...prev, "Process exited with code " + (code !== null ? code : 0)]);
 			setProcess(null);
 		}
-
-		process.stdout?.on("data", onOut);
-		process.stderr?.on("data", onOut);
+		process.stdout.setEncoding("utf-8")
+		process.stdout.on("data", onOut);
+		process.stderr.on("data", onOut);
 		process.on("close", onClose);
 
 		return () => {
-			process.stdout?.off("data", onOut);
-			process.stderr?.off("data", onOut);
+			process.stdout.off("data", onOut);
+			process.stderr.off("data", onOut);
 			process.off("close", onClose);
 			if (process.exitCode === null && !process.killed) process.kill("SIGTERM");
 		};
@@ -102,26 +102,23 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 					}
 				}}><Square className={"stop-icon"}/></button>
 				<button className={"copy"} onClick={() => {
-					try {
-						void navigator.clipboard.writeText(lines.join("\n"));
-						new Notice("Copied!\nSuccesfully copied code to clipboard", 2000);
-					}catch(error) {
-						console.error("Couldn't copy to clipboard", error);
-					}
+					void navigator.clipboard.writeText(lines.join("\n"));
+					new Notice("Copied!\nSuccessfully copied code to clipboard", 2000);
 				}}><Copy className={"copy-icon"}/></button>
 			</div>}
 		</HighlightedCode>
 		{(config.runnable !== null ? config.runnable : settings.runnable) &&
-			<div id={"output"}>
+			<div className={"output"}>
 				{outputLines.map((l, i) => {
-					return <div className={"line"} key={i}>{i} {l}</div>
+					return <div className={"line"} key={i}>{l}</div>
 				})}
 			</div>
 		}
-		{(config.allowInput !== null ? config.allowInput : settings.allowInput && (config.runnable !== null ? config.runnable : settings.runnable)) &&
+		{((config.allowInput !== null ? config.allowInput : settings.allowInput) && (config.runnable !== null ? config.runnable : settings.runnable)) &&
 			<input type="text" placeholder={"Input"} onKeyDown={(e) => {
 				if (e.key === "Enter") {
-					process?.stdin?.write(e.currentTarget.value + "\n");
+					if(!process || process.killed) return;
+					process.stdin.write(e.currentTarget.value + "\n");
 					e.currentTarget.value = "";
 				}
 			}}/>
