@@ -2,7 +2,7 @@
 	"id": "codeblocks-plus-plus",
 	"name": "CodeBlocks++",
 	"version": "1.0.0",
-	"minAppVersion": "1.4.10",
+	"minAppVersion": "1.13.0",
 	"description": "Enhances Obsidians Codeblocks by letting them execute the code",
 	"author": "Johannes Hans",
 	"authorUrl": "https://github.com/CommandJoo",
