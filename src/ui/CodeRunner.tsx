@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
-import {ChildProcess, ChildProcessWithoutNullStreams, spawn} from "node:child_process";
+import type {ChildProcessWithoutNullStreams} from "node:child_process";
+import {spawn} from "node:child_process";
 import HighlightedCode from "./HighlightedCode";
 import {CodeBlockConfig, RegisteredLanguage} from "../types";
 import {Buffer} from "node:buffer";
@@ -14,7 +15,7 @@ type CodeRunnerProps = {
 export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerProps) {
 	const settings = useSettings();
 	const [resolvedLanguage] = useState<RegisteredLanguage|undefined>(resolveRegisteredLanguage());
-	const [process, setProcess] = useState<ChildProcess|undefined>(undefined);
+	const [process, setProcess] = useState<ChildProcessWithoutNullStreams|undefined>(undefined);
 	const [outputLines, setOutputLines] = useState<string[]>([]);
 	const source = lines.join("\n");
 
@@ -33,16 +34,6 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 			process.stderr?.off("data", onOut);
 			process.off("close", onClose);
 			if (process.exitCode === null && !process.killed) process.kill("SIGTERM");
-		};
-	}, [process]);
-
-	useEffect(() => {
-		if (!process) return;
-
-		return () => {
-			if (process.exitCode === null && !process.killed) {
-				process.kill("SIGTERM");
-			}
 		};
 	}, [process]);
 
