@@ -3,7 +3,6 @@ import type {ChildProcessWithoutNullStreams} from "node:child_process";
 import {spawn} from "node:child_process";
 import HighlightedCode from "./HighlightedCode";
 import {CodeBlockConfig, RegisteredLanguage} from "../types";
-import {Buffer} from "node:buffer";
 import {useSettings} from "../CBPPSettings";
 import {Play, Square, Copy} from "lucide-react";
 import {Notice} from "obsidian";
@@ -24,16 +23,13 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 	useEffect(() => {
 		if (!process) return;
 
-		const onOut = (data: Buffer): void => {
-			const lines: string[] = data
-				.toString()
+		const onOut = (data: Uint8Array | string): void => {
+			const text = typeof data === "string" ? data : new TextDecoder().decode(data);
+			const chunkLines = text
 				.split(/\r?\n/)
-				.filter((line: string) => line.length > 0);
+				.filter((line) => line.length > 0);
 
-			setOutputLines((prev: string[]): string[] => [
-				...prev,
-				...lines
-			]);
+			setOutputLines((prev) => [...prev, ...chunkLines]);
 		};
 		let onClose = (code: number | null): void => {
 			setOutputLines((prev: string[]) => [...prev, "Process exited with code " + (code !== null ? code : 0)]);
@@ -125,7 +121,7 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 		{(config.allowInput !== null ? config.allowInput : settings.allowInput && (config.runnable !== null ? config.runnable : settings.runnable)) &&
 			<input type="text" placeholder={"Input"} onKeyDown={(e) => {
 				if (e.key === "Enter") {
-					process?.stdin?.write(Buffer.from(e.currentTarget.value, "utf-8"));
+					process?.stdin?.write(e.currentTarget.value + "\n");
 					e.currentTarget.value = "";
 				}
 			}}/>
