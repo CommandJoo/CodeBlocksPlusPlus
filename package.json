@@ -1,6 +1,6 @@
 {
 	"name": "codeblocks-plus-plus",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
 	"main": "CBPP.js",
 	"type": "module",
@@ -17,8 +17,8 @@
 		"@codemirror/view": "^6.43.13",
 		"@eslint/js": "^9.39.4",
 		"@types/node": "^22.15.17",
-		"@types/react": "^19.3.0",
-		"@types/react-dom": "^19.3.0",
+		"@types/react": "^18.3.31",
+		"@types/react-dom": "^18.3.7",
 		"esbuild": "0.25.5",
 		"eslint": "^9.39.4",
 		"eslint-plugin-obsidianmd": "^0.4.0",
@@ -30,7 +30,7 @@
 		"typescript-eslint": "^8.59.1"
 	},
 	"dependencies": {
-		"react": "^19.3.1",
-		"react-dom": "^19.3.1"
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1"
 	}
 }
