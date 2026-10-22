@@ -31,6 +31,7 @@ const context = await esbuild.context({
 		'@lezer/highlight',
 		'@lezer/lr',
 		'node:child_process',
+		'node:buffer',
 		...builtinModules,
 	],
 	format: 'cjs',

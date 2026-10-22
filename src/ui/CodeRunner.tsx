@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {ChildProcess, ChildProcessWithoutNullStreams, spawn} from "node:child_process";
 import HighlightedCode from "./HighlightedCode";
 import {CodeBlockConfig, RegisteredLanguage} from "../types";
+import {Buffer} from "node:buffer";
 import {useSettings} from "../CBPPSettings";
 
 type CodeRunnerProps = {
