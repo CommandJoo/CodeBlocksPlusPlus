@@ -17,7 +17,23 @@ export const DEFAULT_SETTINGS: CBPPSettings = {
 			aliases: ["js"],
 			executable: "node",
 			command: "-e",
+			preamble: "const inp = process.stdin;\ninp.setEncoding(\"utf-8\");",
+			deletable: false,
+		},
+		{
+			name: "python",
+			aliases: ["py", "python3"],
+			executable: "python",
+			command: "-c",
 			preamble: "",
+			deletable: false,
+		},
+		{
+			name: "c++",
+			aliases: ["cpp"],
+			executable: "clang-repl",
+			command: "",
+			preamble: "#include <iostream>",
 			deletable: false,
 		}
 	]

@@ -48,5 +48,9 @@ This allows for a much cleaner syntax.
 | runnable | \<boolean> | Whether or not the Codeblock will be executable *(overwrites the settings value)*                    |
 | input    | \<boolean> | Whether or not there should be an input field for the user *(overwrites the settings value)*         |
 
+### Registering Languages
+In order to execute Codeblocks you need to register languages with an interpreter 
+in the Settings tab of this Plugin
+
 ## Credits
 - [Shiki](https://github.com/shikijs/shiki), used for Syntax highlighting in rendered Codeblocks
