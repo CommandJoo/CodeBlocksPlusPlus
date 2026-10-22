@@ -5,6 +5,8 @@ import HighlightedCode from "./HighlightedCode";
 import {CodeBlockConfig, RegisteredLanguage} from "../types";
 import {Buffer} from "node:buffer";
 import {useSettings} from "../CBPPSettings";
+import {Play, Square, Copy} from "lucide-react";
+import {Notice} from "obsidian";
 
 type CodeRunnerProps = {
 	lines: string[];
@@ -14,8 +16,8 @@ type CodeRunnerProps = {
 
 export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerProps) {
 	const settings = useSettings();
-	const [resolvedLanguage] = useState<RegisteredLanguage|undefined>(resolveRegisteredLanguage());
-	const [process, setProcess] = useState<ChildProcessWithoutNullStreams|undefined>(undefined);
+	const [resolvedLanguage] = useState<RegisteredLanguage>(resolveRegisteredLanguage());
+	const [process, setProcess] = useState<ChildProcessWithoutNullStreams | null>(null);
 	const [outputLines, setOutputLines] = useState<string[]>([]);
 	const source = lines.join("\n");
 
@@ -33,7 +35,10 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 				...lines
 			]);
 		};
-		let onClose = (code: number | null): void => setOutputLines((prev: string[]) => [...prev, "Process exited with code " + code]);
+		let onClose = (code: number | null): void => {
+			setOutputLines((prev: string[]) => [...prev, "Process exited with code " + (code !== null ? code : 0)]);
+			setProcess(null);
+		}
 
 		process.stdout?.on("data", onOut);
 		process.stderr?.on("data", onOut);
@@ -47,8 +52,15 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 		};
 	}, [process]);
 
-	function resolveRegisteredLanguage(): RegisteredLanguage | undefined {
-		let lang: undefined | RegisteredLanguage = undefined;
+	function resolveRegisteredLanguage(): RegisteredLanguage {
+		let lang: RegisteredLanguage = {
+			name: "",
+			aliases: [],
+			executable: "",
+			command: "",
+			preamble: "",
+			deletable: false
+		};
 		let conf = settings.allowInlineMetadata ? {...config, ...metadataConfig} : config;
 		for (let language of settings.registeredLanguages) {
 			if (language.name === conf.lang.trim()) {
@@ -66,29 +78,51 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 
 	function runCode() {
 		if (!resolvedLanguage) return;
-		if(!resolvedLanguage.executable) return;
-		const proc: ChildProcessWithoutNullStreams = spawn(resolvedLanguage.executable, [resolvedLanguage.command, resolvedLanguage.preamble+"\n"+source], {shell: false});
+		if (!resolvedLanguage.executable) return;
+		const proc: ChildProcessWithoutNullStreams =
+			spawn(
+				resolvedLanguage.executable,
+				[resolvedLanguage.command, resolvedLanguage.preamble + "\n" + source],
+				{shell: false}
+			);
 		setProcess(proc);
 	}
 
-
 	return <div className={"code-runner"}
-	            style={{"padding": (config.runnable !== undefined ? config.runnable : settings.runnable) ? "8px" : "0"}}>
-		<HighlightedCode code={source} config={settings.allowInlineMetadata ? {...config, ...metadataConfig} : config}/>
-		<button id={"lang"} onClick={() => {
-			if (config.runnable !== undefined ? config.runnable : settings.runnable) {
-				setOutputLines([]);
-				runCode();
-			}
-		}}>{resolvedLanguage ? resolvedLanguage.name : ""}</button>
-		{(config.runnable !== undefined ? config.runnable : settings.runnable) &&
+				style={{"padding": (config.runnable !== null ? config.runnable : settings.runnable) ? "8px" : "0"}}>
+		<HighlightedCode code={source} config={settings.allowInlineMetadata ? {...config, ...metadataConfig} : config}>
+			{(config.showButtons === null || config.showButtons) && <div className={"buttons"}>
+				<button className={"run " + ((process && !process?.killed) ? "running" : "")} onClick={() => {
+					if (config.runnable !== null ? config.runnable : settings.runnable) {
+						setOutputLines([]);
+						runCode();
+					}
+				}}><Play className={"run-icon"}/></button>
+				<button className={"stop " + ((process && !process?.killed) ? "running" : "")} onClick={() => {
+					if (config.runnable !== null ? config.runnable : settings.runnable) {
+						if (process) {
+							process.kill("SIGTERM");
+						}
+					}
+				}}><Square className={"stop-icon"}/></button>
+				<button className={"copy"} onClick={() => {
+					try {
+						void navigator.clipboard.writeText(lines.join("\n"));
+						new Notice("Copied!\nSuccesfully copied code to clipboard", 2000);
+					}catch(error) {
+						console.error("Couldn't copy to clipboard", error);
+					}
+				}}><Copy className={"copy-icon"}/></button>
+			</div>}
+		</HighlightedCode>
+		{(config.runnable !== null ? config.runnable : settings.runnable) &&
 			<div id={"output"}>
 				{outputLines.map((l, i) => {
 					return <div className={"line"} key={i}>{i} {l}</div>
 				})}
 			</div>
 		}
-		{(config.allowInput !== undefined ? config.allowInput : settings.allowInput && (config.runnable !== undefined ? config.runnable : settings.runnable)) &&
+		{(config.allowInput !== null ? config.allowInput : settings.allowInput && (config.runnable !== null ? config.runnable : settings.runnable)) &&
 			<input type="text" placeholder={"Input"} onKeyDown={(e) => {
 				if (e.key === "Enter") {
 					process?.stdin?.write(Buffer.from(e.currentTarget.value, "utf-8"));

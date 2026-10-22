@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
 	BundledLanguage,
 	codeToTokens,
@@ -10,10 +10,11 @@ import {useSettings} from "../CBPPSettings";
 type HighlightedCodeProps = {
 	code: string;
 	config: CodeBlockConfig;
+	children: React.ReactNode;
 }
 
 
-export default function HighlightedCode({code, config}: HighlightedCodeProps) {
+export default function HighlightedCode({code, config, children}: HighlightedCodeProps) {
 	const settings = useSettings();
 	const [tokens, setTokens] = useState<ThemedToken[][]>([]);
 
@@ -44,18 +45,20 @@ export default function HighlightedCode({code, config}: HighlightedCodeProps) {
 		};
 	}, [code, config.lang, settings]);
 
-    return <pre id={"cbpp-code"}>
+	return <pre id={"cbpp-code"}>
 		<code>
-			{tokens.map((line,i) => {
-				return <span className={"line "+((config.numbers !== undefined ? config.numbers : settings.shikiLines) ? "numbers" : "")} key={i}>
-                        {line.map((token, j) => (
-							<span
-								key={j}
-								style={{ color: token.color }}
-							>
+			{children}
+			{tokens.map((line, i) => {
+				return <span
+					className={"line " + ((config.numbers !== null ? config.numbers : settings.shikiLines) ? "numbers" : "")} key={i}>
+					{line.map((token, j) => (
+						<span
+							key={j}
+							style={{color: token.color}}
+						>
                                 {token.content}
                             </span>
-						))}
+					))}
 					{"\n"}
 				</span>;
 			})}

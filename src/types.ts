@@ -21,10 +21,11 @@ export type CBPPSettings = {
 
 export type CodeBlockConfig = {
 	lang: string;
-	theme: string | undefined;
-	numbers: boolean | undefined;
-	runnable: boolean | undefined;
-	allowInput: boolean | undefined;
+	theme: string | null;
+	numbers: boolean | null;
+	runnable: boolean | null;
+	allowInput: boolean | null;
+	showButtons: boolean | null;
 };
 const languages = Object.entries(bundledLanguagesInfo).map(([id]) => (id))
 

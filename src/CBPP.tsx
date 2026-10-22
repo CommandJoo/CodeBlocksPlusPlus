@@ -37,10 +37,11 @@ export default class CodeBlocksPlusPlus extends Plugin {
 		let lines = [];
 		const config: CodeBlockConfig = {
 			lang: "",
-			theme: undefined,
-			numbers: undefined,
-			runnable: undefined,
-			allowInput: undefined,
+			theme: null,
+			numbers: null,
+			runnable: null,
+			allowInput: null,
+			showButtons: null,
 		}
 
 		let finished = false;
@@ -54,13 +55,16 @@ export default class CodeBlocksPlusPlus extends Plugin {
 					config.theme = value;
 				}
 				if(key === "numbers" && value) {
-					config.numbers = value.toLowerCase() === "true" ? true : value.toLowerCase() === "false" ? false: undefined;
+					config.numbers = value.toLowerCase() === "true" ? true : value.toLowerCase() === "false" ? false: null;
 				}
 				if(key === "runnable" && value) {
-					config.runnable = value.toLowerCase() === "true" ? true : value.toLowerCase() === "false" ? false: undefined;
+					config.runnable = value.toLowerCase() === "true" ? true : value.toLowerCase() === "false" ? false: null;
 				}
 				if(key === "input" && value) {
-					config.allowInput = value.toLowerCase() === "true" ? true : value.toLowerCase() === "false" ? false: undefined;
+					config.allowInput = value.toLowerCase() === "true" ? true : value.toLowerCase() === "false" ? false: null;
+				}
+				if(key === "buttons" && value) {
+					config.showButtons = value.toLowerCase() === "true" ? true : value.toLowerCase() === "false" ? false : null;
 				}
 			}else {
 				finished = true;
@@ -80,7 +84,6 @@ export default class CodeBlocksPlusPlus extends Plugin {
 			const [config, lines] = this.codeToMetadata(rawLines);
 			const info = ctx.getSectionInfo(el)
 			const metaConfig: Partial<CodeBlockConfig> = info ? this.inlineToMetadata(info) : {};
-
 
 			root.render(
 				<StoreContext.Provider value={this.settings}>
