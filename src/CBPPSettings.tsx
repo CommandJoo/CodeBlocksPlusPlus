@@ -40,7 +40,7 @@ export const DEFAULT_SETTINGS: CBPPSettings = {
 };
 
 const themes: Record<string, string> = Object.fromEntries(
-	Object.keys(bundledThemesInfo).map((id) => [id, id])
+	Object.values(bundledThemesInfo).map((inf) => [inf.id, inf.displayName])
 );
 
 export class ConfigStore<T> {
