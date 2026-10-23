@@ -10,11 +10,10 @@ import {useSettings} from "../CBPPSettings";
 type HighlightedCodeProps = {
 	code: string;
 	config: CodeBlockConfig;
-	children: React.ReactNode;
 }
 
 
-export default function HighlightedCode({code, config, children}: HighlightedCodeProps) {
+export default function HighlightedCode({code, config}: HighlightedCodeProps) {
 	const settings = useSettings();
 	const [tokens, setTokens] = useState<ThemedToken[][]>([]);
 
@@ -47,7 +46,6 @@ export default function HighlightedCode({code, config, children}: HighlightedCod
 
 	return <pre id={"cbpp-code"}>
 		<code>
-			{children}
 			{tokens.map((line, i) => {
 				return <span
 					className={"line " + ((config.numbers !== null ? config.numbers : settings.shikiLines) ? "numbers" : "")} key={i}>

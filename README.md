@@ -47,6 +47,7 @@ This allows for a much cleaner syntax.
 | numbers  | \<boolean> | Whether or not line numbers should be displayed                    *(overwrites the settings value)* |
 | runnable | \<boolean> | Whether or not the Codeblock will be executable *(overwrites the settings value)*                    |
 | input    | \<boolean> | Whether or not there should be an input field for the user *(overwrites the settings value)*         |
+| buttons  | \<boolean> | Whether or not buttons for running, stopping, and copying are displayed                              |
 
 ### Registering Languages
 In order to execute Codeblocks you need to register languages with an interpreter 

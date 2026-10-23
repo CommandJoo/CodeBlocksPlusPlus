@@ -40,8 +40,112 @@ html {
 	background: var(--background-secondary);
 	border-radius: var(--radius-m);
 
+	.buttons {
+		position: absolute;
+		display: flex;
+		top: 14px;
+		right: 20px;
+
+		gap: 8px;
+
+		cursor: default;
+
+		/*vertical, horizontal, vertical */
+		padding: 2px 8px;
+		border-radius: var(--radius-s);
+
+		button {
+			position: relative;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 3rem;
+			height: 3rem;
+			aspect-ratio: 1/1;
+			padding: 8%;
+
+
+			&:focus, &:focus-visible{
+				outline: none;
+				box-shadow: none;
+			}
+
+			&.run {
+				transition: 0.1s ease-out transform, background-color 0.05s;
+				outline: none;
+				color: rgb(var(--color-green-rgb));
+				background-color: transparent;
+				transform: translateX(calc(3rem + 8px));
+				&:hover {
+					background-color: var(--color-base-25);
+				}
+
+				&.running {
+					transform: translateX(0);
+					border: 2px solid rgba(var(--color-green-rgb), 0.9);
+					background: rgba(var(--color-green-rgb), 0.8);
+					color: var(--text-normal);
+
+					&:hover {
+						background: rgba(var(--color-green-rgb), 0.9);
+					}
+				}
+
+				.run-icon {
+					aspect-ratio: 1/1;
+					width: 100%;
+					height: 100%;
+				}
+
+			}
+
+			&.stop {
+				transition: 0.1s ease-out transform, background-color 0.05s;
+				outline: none;
+				color: transparent;
+
+				background-color: transparent;
+				border: transparent;
+				transform: translateX(calc(3rem + 8px));
+
+				&.running {
+					transform: translateX(0);
+					color: var(--text-normal);
+					background-color: rgba(var(--color-red-rgb), 0.8);
+					border: 2px solid rgb(var(--color-red-rgb));
+
+					&:hover {
+						background-color: rgba(var(--color-red-rgb), 0.9);
+					}
+				}
+
+				.stop-icon {
+					aspect-ratio: 1/1;
+					width: 100%;
+					height: 100%;
+				}
+			}
+
+			&.copy {
+				transition: 0.05s ease-out background-color;
+				outline: none;
+				color: rgb(var(--text-faint));
+				background-color: var(--color-base-25);
+				&:hover {
+					background-color: var(--color-base-40);
+				}
+				.copy-icon {
+					aspect-ratio: 1/1;
+					width: 100%;
+					height: 100%;
+				}
+
+			}
+		}
+	}
+}
+
 	#cbpp-code {
-		position: relative;
 		max-height: 500px;
 		overflow-y: scroll;
 
@@ -64,125 +168,24 @@ html {
 			border-right: 1px solid var(--window-border-color);
 		}
 
-		.buttons {
-			position: absolute;
-			display: flex;
-			top: 8px;
-			right: 8px;
-
-			gap: 8px;
-
-			cursor: default;
-
-			/*vertical, horizontal, vertical */
-			padding: 2px 8px;
-			border-radius: var(--radius-s);
-
-			button {
-				position: relative;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: 3rem;
-				height: 3rem;
-				aspect-ratio: 1/1;
-				padding: 8%;
-
-
-				&:focus, &:focus-visible{
-					outline: none;
-					box-shadow: none;
-				}
-
-				&.run {
-					transition: 0.1s ease-out transform, background-color 0.05s;
-					outline: none;
-					color: rgb(var(--color-green-rgb));
-					background-color: transparent;
-					transform: translateX(calc(3rem + 8px));
-					&:hover {
-						background-color: var(--color-base-25);
-					}
-
-					&.running {
-						transform: translateX(0);
-						border: 2px solid rgba(var(--color-green-rgb), 0.9);
-						background: rgba(var(--color-green-rgb), 0.8);
-						color: var(--text-normal);
-
-						&:hover {
-							background: rgba(var(--color-green-rgb), 0.9);
-						}
-					}
-
-					.run-icon {
-						aspect-ratio: 1/1;
-						width: 100%;
-						height: 100%;
-					}
-
-				}
-
-				&.stop {
-					transition: 0.1s ease-out transform, background-color 0.05s;
-					outline: none;
-					color: transparent;
-
-					background-color: transparent;
-					border: transparent;
-					transform: translateX(calc(3rem + 8px));
-
-					&.running {
-						transform: translateX(0);
-						color: var(--text-normal);
-						background-color: rgba(var(--color-red-rgb), 0.8);
-						border: 2px solid rgb(var(--color-red-rgb));
-
-						&:hover {
-							background-color: rgba(var(--color-red-rgb), 0.9);
-						}
-					}
-
-					.stop-icon {
-						aspect-ratio: 1/1;
-						width: 100%;
-						height: 100%;
-					}
-				}
-
-				&.copy {
-					transition: 0.05s ease-out background-color;
-					outline: none;
-					color: rgb(var(--text-faint));
-					background-color: var(--color-base-25);
-					&:hover {
-						background-color: var(--color-base-40);
-					}
-					.copy-icon {
-						aspect-ratio: 1/1;
-						width: 100%;
-						height: 100%;
-					}
-
-				}
-			}
-		}
-	}
-
 	.output {
-		min-height: 40px;
 		max-height: 300px;
 		overflow-y: scroll;
 		background: var(--code-background);
 		border: var(--border-width) solid var(--window-border-color);
 		border-radius: var(--radius-s);
-		padding: 4px;
 
 		display: flex;
 		flex-direction: column;
+		gap: 2px;
+		padding: 2px 1rem;
+		justify-content: center;
 
 		.line {
 			display: flex;
+			align-items: center;
+			text-align: center;
+			height: 1.5rem;
 			width: 100%;
 		}
 	}
