@@ -240,15 +240,17 @@ export class CBPPSettingsTab extends PluginSettingTab {
 										})
 									})).then(() => {
 							})
-							new Setting(row)
-								.addButton(button => button.setButtonText("Remove").setCta().onClick(async () => {
-									const langs = this.plugin.settings.get().registeredLanguages
-										.filter(l => l.name !== lang.name);
+							if(lang.deletable) {
+								new Setting(row)
+									.addButton(button => button.setButtonText("Remove").setCta().onClick(async () => {
+										const langs = this.plugin.settings.get().registeredLanguages
+											.filter(l => l.name !== lang.name);
 
-									await this.plugin.updateSettings({registeredLanguages: langs});
-									this.update();
-								})).then(() => {
-							});
+										await this.plugin.updateSettings({registeredLanguages: langs});
+										this.update();
+									})).then(() => {
+								});
+							}
 						}
 					});
 				}),
