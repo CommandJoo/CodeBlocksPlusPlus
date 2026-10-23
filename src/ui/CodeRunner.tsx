@@ -4,7 +4,7 @@ import {spawn} from "child_process";
 import HighlightedCode from "./HighlightedCode";
 import {CodeBlockConfig, RegisteredLanguage} from "../types";
 import {useSettings} from "../CBPPSettings";
-import {Play, Square, Copy} from "lucide-react";
+import {Play, Square, Copy, RefreshCw} from "lucide-react";
 import {Notice} from "obsidian";
 
 type CodeRunnerProps = {
@@ -107,10 +107,13 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 			<div className={"buttons"}>
 				<button className={"run " + ((process && !process?.killed) ? "running" : "")} onClick={() => {
 					if (config.runnable !== null ? config.runnable : settings.runnable) {
+						if (process) {
+							process.kill("SIGTERM");
+						}
 						setOutputLines([]);
 						runCode();
 					}
-				}}><Play className={"run-icon"}/></button>
+				}}>{(!process || process.killed) ? <Play className={"run-icon"}/> : <RefreshCw className={"run-icon"}/>}</button>
 				<button className={"stop " + ((process && !process?.killed) ? "running" : "")} onClick={() => {
 					if (config.runnable !== null ? config.runnable : settings.runnable) {
 						if (process) {
