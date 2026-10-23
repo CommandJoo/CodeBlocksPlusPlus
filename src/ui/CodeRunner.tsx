@@ -103,24 +103,25 @@ export default function CodeRunner({lines, config, metadataConfig}: CodeRunnerPr
 				}
 			}}/>
 		}
-		{(config.showButtons === null || config.showButtons) && <div className={"buttons"}>
-			<button className={"run " + ((process && !process?.killed) ? "running" : "")} onClick={() => {
-				if (config.runnable !== null ? config.runnable : settings.runnable) {
-					setOutputLines([]);
-					runCode();
-				}
-			}}><Play className={"run-icon"}/></button>
-			<button className={"stop " + ((process && !process?.killed) ? "running" : "")} onClick={() => {
-				if (config.runnable !== null ? config.runnable : settings.runnable) {
-					if (process) {
-						process.kill("SIGTERM");
+		{((config.runnable !== null ? config.runnable : settings.runnable) && (config.showButtons === null || config.showButtons)) &&
+			<div className={"buttons"}>
+				<button className={"run " + ((process && !process?.killed) ? "running" : "")} onClick={() => {
+					if (config.runnable !== null ? config.runnable : settings.runnable) {
+						setOutputLines([]);
+						runCode();
 					}
-				}
-			}}><Square className={"stop-icon"}/></button>
-			<button className={"copy"} onClick={() => {
-				void navigator.clipboard.writeText(lines.join("\n"));
-				new Notice("Copied!\nSuccessfully copied code to clipboard", 2000);
-			}}><Copy className={"copy-icon"}/></button>
-		</div>}
+				}}><Play className={"run-icon"}/></button>
+				<button className={"stop " + ((process && !process?.killed) ? "running" : "")} onClick={() => {
+					if (config.runnable !== null ? config.runnable : settings.runnable) {
+						if (process) {
+							process.kill("SIGTERM");
+						}
+					}
+				}}><Square className={"stop-icon"}/></button>
+				<button className={"copy"} onClick={() => {
+					void navigator.clipboard.writeText(lines.join("\n"));
+					new Notice("Copied!\nSuccessfully copied code to clipboard", 2000);
+				}}><Copy className={"copy-icon"}/></button>
+			</div>}
 	</div>
 }

@@ -1,7 +1,5 @@
 Add Options for
 - Codeblock size (always full size, or scroll at threshold)
 
-Add buttons for
-- Run
-- Stop
-- Copy
+Hide buttons when not runnable
+Hide delete buttons for undeletable languages

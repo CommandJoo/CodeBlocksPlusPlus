@@ -1,7 +1,7 @@
 {
 	"id": "codeblocks-plus-plus",
 	"name": "CodeBlocks++",
-	"version": "1.1.3",
+	"version": "1.1.4",
 	"minAppVersion": "1.13.0",
 	"description": "Enhances Codeblocks by letting them execute the code.",
 	"author": "Johannes Hans",
