@@ -1,5 +1,5 @@
 # CodeBlocks++
-[CodeBlocks++](https://github.com/CommandJoo/CodeBlocksPlusPlus) is a plugin for Obsidian that allows you to define custom Codeblocks
+[CodeBlocks++](https://github.com/CommandJoo/CodeBlocksPlusPlus) is a plugin for [Obsidian](https://obsidian.md) that allows you to define custom Codeblocks
 which can be highlighted and executed. It allows for general customization aswell as individual styling using metadata properties.
 
 > Note that this plugin will execute programs defined by the User.
@@ -19,7 +19,7 @@ Or install it directly via the Obsidian Community Plugins portal
 
 ## Usage
 ### Codeblock Syntax
-To use executable Codeblocks define a Codeblock with the language "cbpp". This language should ideally be registered in your settings under [Registered Languages](#registering-languages)
+To use executable Codeblocks define a Codeblock with the language "cbpp". This language should ideally be registered in your settings under [Registered Languages](#registering-languages) in order to execute code. However this isnt required if you only want to use this plugin for syntax highlighting/code styling.
 
 Settings for a specific Codeblock can be specified by the "@cbpp:" prefix.
 ~~~markdown

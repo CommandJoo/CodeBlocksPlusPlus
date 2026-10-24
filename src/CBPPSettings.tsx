@@ -57,7 +57,7 @@ export class ConfigStore<T> {
 	get = () => this.value;
 
 	set(next: T) {
-		this.value = next;                     // must be a NEW object so React sees the change
+		this.value = next;
 		this.listeners.forEach(cb => cb());
 	}
 }
