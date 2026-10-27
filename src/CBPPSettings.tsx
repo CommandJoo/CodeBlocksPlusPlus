@@ -8,6 +8,7 @@ import {RegisterLanguageModal} from "./ui/RegisterLanguageModal";
 export const DEFAULT_SETTINGS: CBPPSettings = {
 	shikiTheme: 'github-dark',
 	shikiLines: true,
+	scrollable: true,
 	runnable: true,
 	allowInput: true,
 	allowInlineMetadata: true,
@@ -115,7 +116,7 @@ export class CBPPSettingsTab extends PluginSettingTab {
 		return [
 			{
 				type: "group",
-				heading: "Shiki Settings",
+				heading: "Codeblock Style",
 				items: [
 					{
 						name: "Shiki Theme",
@@ -132,7 +133,15 @@ export class CBPPSettingsTab extends PluginSettingTab {
 							type: "toggle",
 							key: "shikiLines",
 						}
-					}
+					},
+					{
+						name: "Size threshold",
+						desc: "Defines if Codeblocks should start being scrollable at a certain size, to allow for better readability.",
+						control: {
+							type: "toggle",
+							key: "scrollable",
+						}
+					},
 				]
 			},
 			{

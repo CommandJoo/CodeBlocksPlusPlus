@@ -39,6 +39,7 @@ export default class CodeBlocksPlusPlus extends Plugin {
 			lang: "",
 			theme: null,
 			numbers: null,
+			scrollable: null,
 			runnable: null,
 			allowInput: null,
 			showButtons: null,
@@ -56,6 +57,9 @@ export default class CodeBlocksPlusPlus extends Plugin {
 				}
 				if(key === "numbers" && value) {
 					config.numbers = value.toLowerCase() === "true" ? true : value.toLowerCase() === "false" ? false: null;
+				}
+				if(key === "scrollable" && value) {
+					config.scrollable = value.toLowerCase() === "true" ? true : value.toLowerCase() === "false" ? false: null;
 				}
 				if(key === "runnable" && value) {
 					config.runnable = value.toLowerCase() === "true" ? true : value.toLowerCase() === "false" ? false: null;

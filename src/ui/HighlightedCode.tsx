@@ -44,7 +44,7 @@ export default function HighlightedCode({code, config}: HighlightedCodeProps) {
 		};
 	}, [code, config.lang, settings]);
 
-	return <pre id={"cbpp-code"}>
+	return <pre id={"cbpp-code"} className={(config.scrollable !== null ? config.scrollable : settings.scrollable) ? "scrollable" : ""}>
 		<code>
 			{tokens.map((line, i) => {
 				return <span

@@ -12,7 +12,8 @@ export type RegisteredLanguage = {
 
 export type CBPPSettings = {
 	shikiTheme: string;
-	shikiLines: boolean
+	shikiLines: boolean;
+	scrollable: boolean
 	runnable: boolean;
 	allowInput: boolean;
 	allowInlineMetadata: boolean;
@@ -23,6 +24,7 @@ export type CodeBlockConfig = {
 	lang: string;
 	theme: string | null;
 	numbers: boolean | null;
+	scrollable: boolean | null;
 	runnable: boolean | null;
 	allowInput: boolean | null;
 	showButtons: boolean | null;
